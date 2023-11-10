@@ -1,0 +1,76 @@
+name: Check PR
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions: {}
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: shellcheck
+        uses: reviewdog/action-shellcheck@v1
+        with:
+          reporter: github-pr-review
+          pattern: main.sh
+          fail_on_error: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  committed:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    if: |
+      github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: committed
+        uses: crate-ci/committed@v1.0.20
+        with:
+          args: --no-merge-commit
+
+  typos:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: typos
+        uses: crate-ci/typos@v1.16.14
+
+  dependabot-merge:
+    needs:
+      - shellcheck
+      - committed
+      - typos
+    permissions:
+      contents: write
+      pull-requests: write
+    if: |
+      github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Find associated PR
+      uses: jwalton/gh-find-current-pr@v1.3.2
+      id: findpr
+      with:
+        github-token: ${{ github.token }}
+        state: open
+        sha: ${{ github.event.pull_request.head.sha || github.event.workflow_run.head_sha || github.sha }}
+    - name: merge-if-built
+      continue-on-error: true
+      uses: fastify/github-action-merge-dependabot@v3.9.1
+      with:
+        pr-number: ${{ steps.findpr.outputs.pr }}
+        target: minor
