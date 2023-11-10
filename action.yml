@@ -1,0 +1,40 @@
+name: find-matching-issues
+description: "Find Matching Issues"
+inputs:
+  token:
+    description: "The github token (defaults to the one in github context)"
+    required: false
+    default: ${{ github.token }}
+  repository:
+    description: "The repository to search in defaults to the one in github context"
+    required: false
+    default: ${{ github.repository }}
+  query:
+    description: "The search query to use"
+    required: true
+  format:
+    description: "The format of the output: simple|markdown|json|jsonl, simple is default"
+    required: false
+    default: "simple"
+outputs:
+  path:
+    description: "The path to the file containing the issue list"
+    value: ${{ steps.find_issue.outputs.path }}
+
+branding:
+  color: blue
+  icon: crosshair
+
+runs:
+  using: composite
+  steps:
+    - name: find
+      id: find_issue
+      shell: bash
+      env:
+        SEARCH_QUERY: "${{ inputs.query }}"
+        OUTPUT_FORMAT: "${{ inputs.format }}"
+        GITHUB_TOKEN: "${{ inputs.token }}"
+        GITHUB_REPO: "${{ inputs.repository }}"
+      run: |
+        bash ${{ github.action_path }}/main.sh
