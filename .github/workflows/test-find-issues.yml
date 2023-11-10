@@ -1,0 +1,204 @@
+name: test find-matching-issues
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+env:
+  TEST_UUID: uuid:10891d7e-f199-4042-a716-d8ef3ea56492
+
+jobs:
+  test-find-not-found:
+    name: test find (not-found)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      result: ${{ steps.check_files.outcome || steps.find.outcome || 'failure' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: find issues
+        id: find
+        uses: ./
+        with:
+          query: is:issue uuid:5ad197f9-5b7d-4bb7-8cc0-e20df1ae90bf
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Output should be empty
+        id: check_files
+        run: |
+          if [[ -s "${{ steps.find.outputs.path }}" ]]; then
+            echo "::error::test-find-not-found found something when we should have found nothing"
+            exit 1
+          fi
+
+  test-find-simple:
+    name: test find (simple)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      result: ${{ steps.check_files.outcome || steps.find.outcome || 'failure' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: find issues
+        id: find
+        uses: ./
+        with:
+          query: is:issue ${{ env.TEST_UUID }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          format: simple
+      - name: Check output contents
+        id: check_files
+        run: |
+          if [[ ! -s "${{ steps.find.outputs.path }}" ]]; then
+            echo "::error::we found nothing when we should have found something"
+            exit 1
+          fi
+          URL=$(head -n1 "${{ steps.find.outputs.path }}")
+          if [[ "$URL" != "https://github.com/quotidian-ennui/find-matching-issues/issues/1" ]]; then
+            echo "::error::test-find-simple found the wrong issue"
+            exit 1
+          fi
+
+  test-find-markdown:
+    name: test find (markdown)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      result: ${{ steps.check_files.outcome || steps.find.outcome || 'failure' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: find issues
+        id: find
+        uses: ./
+        with:
+          query: repo:quotidian-ennui/find-matching-issues is:issue ${{ env.TEST_UUID }}
+          format: list
+      - name: Check output contents
+        id: check_files
+        run: |
+          if [[ ! -s "${{ steps.find.outputs.path }}" ]]; then
+            echo "::error::we found nothing when we should have found something"
+            exit 1
+          fi
+          LINE=$(head -n1 "${{ steps.find.outputs.path }}")
+          if ! grep "https://github.com/quotidian-ennui/find-matching-issues/issues/1" <<< "$LINE" > /dev/null; then
+            echo "::error::test-find-markdown found the wrong issue"
+            exit 1
+          fi
+
+  test-find-jsonl:
+    name: test find (jsonlines)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      result: ${{ steps.check_files.outcome || steps.find.outcome || 'failure' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: find issues
+        id: find
+        uses: ./
+        with:
+          query: is:issue ${{ env.TEST_UUID }}
+          format: jsonl
+      - name: Check output contents
+        id: check_files
+        run: |
+          if [[ ! -s "${{ steps.find.outputs.path }}" ]]; then
+            echo "::error::we found nothing when we should have found something"
+            exit 1
+          fi
+          LINE=$(head -n1 "${{ steps.find.outputs.path }}")
+          if ! grep "https://github.com/quotidian-ennui/find-matching-issues/issues/1" <<< "$LINE" > /dev/null; then
+            echo "::error::test-find-jsonl found the wrong issue"
+            exit 1
+          fi
+
+  test-find-json:
+    name: test find (json array)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      result: ${{ steps.check_files.outcome || steps.find.outcome || 'failure' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: find issues
+        id: find
+        uses: ./
+        with:
+          query: is:issue ${{ env.TEST_UUID }}
+          format: json
+      - name: Check output contents
+        id: check_files
+        run: |
+          if [[ ! -s "${{ steps.find.outputs.path }}" ]]; then
+            echo "::error::we found nothing when we should have found something"
+            exit 1
+          fi
+          URL=$(cat  "${{ steps.find.outputs.path }}" | jq -r '.[0].url')
+          if [[ "$URL" != "https://github.com/quotidian-ennui/find-matching-issues/issues/1" ]]; then
+            echo "::error::test-find-json found the wrong issue"
+            exit 1
+          fi
+
+  test_status:
+    name: Assert Tests Passed
+    runs-on: ubuntu-latest
+    if: always()
+    needs:
+      - test-find-not-found
+      - test-find-simple
+      - test-find-markdown
+      - test-find-jsonl
+      - test-find-json
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: test status
+        id: test_status
+        run: |
+          function all_tests_pass() {
+            expected="$#"
+            counter=0
+            while true; do
+              case "$1" in
+                success)
+                  counter=$((counter+1))
+                  shift;;
+                *) break ;;
+              esac
+            done
+            if [[ "$counter" == "$expected" ]]; then
+              return 0
+            else
+              return 1
+            fi
+          }
+          if all_tests_pass "${{ needs.test-find-not-found.outputs.result || 'failure'}}" \
+              "${{ needs.test-find-simple.outputs.result || 'failure' }}" \
+              "${{ needs.test-find-markdown.outputs.result || 'failure' }}" \
+              "${{ needs.test-find-jsonl.outputs.result || 'failure' }}" \
+              "${{ needs.test-find-json.outputs.result || 'failure' }}"
+          then
+            echo "test_status=:thumbsup:" >> "$GITHUB_OUTPUT"
+            echo ":thumbsup:" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "test_status=:thumbsdown:" >> "$GITHUB_OUTPUT"
+            echo ":thumbsdown:" >> "$GITHUB_STEP_SUMMARY"
+          fi
