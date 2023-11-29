@@ -1,0 +1,33 @@
+name: release
+on:
+  push:
+    tags:
+      - '*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+      - name: Generate changelog
+        uses: orhun/git-cliff-action@b7913b664658dd091d9971658cb02a19047baa79 # v2.3.0
+        id: changelog
+        with:
+          args: --current
+      - name: Create Release
+        uses: ncipollo/release-action@6c75be85e571768fa31b40abf38de58ba0397db5 # v1.13.0
+        with:
+          bodyFile: ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          makeLatest: true

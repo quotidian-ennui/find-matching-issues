@@ -1,0 +1,83 @@
+# configuration file for git-cliff (0.1.0)
+
+[changelog]
+# changelog header
+header = """
+# Changelog
+
+"""
+# template for the changelog body
+# https://tera.netlify.app/docs/#introduction
+body = """
+{% if version %}\
+    ## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
+{% else %}\
+    ## [unreleased]
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+    ### {{ group | striptags | trim | upper_first }}
+    {% for commit in commits %}
+        - {% if commit.breaking %}(:boom: **BREAKING**) {% endif %}{% if commit.scope %}({{ commit.scope }}) {% endif %}{{ commit.message | upper_first }} by {{commit.author.name}}\
+    {% endfor %}
+{% endfor %}\n
+"""
+# remove the leading and trailing whitespace from the template
+trim = true
+# changelog footer
+footer = """
+"""
+
+postprocessors = [
+    { pattern = 'dependabot\[.*\]', replace="@dependabot"},
+    { pattern = 'Lewin Chan', replace="@quotidian-ennui"},
+]
+
+[git]
+# parse the commits based on https://www.conventionalcommits.org
+conventional_commits = true
+# filter out the commits that are not conventional
+filter_unconventional = false
+# regex for preprocessing the commit messages
+commit_preprocessors = [
+    { pattern = '\((\w+\s)?#([0-9]+)\)', replace = "([#${2}](https://github.com/quotidian-ennui/find-matching-issues/issues/${2}))"},
+    { pattern = '^Bump (.*)', replace = "deps: Bump $1"},
+    { pattern = '^updatecli: (.*)', replace = "deps(updatecli): $1"},
+]
+# regex for parsing and grouping commits
+commit_parsers = [
+    { message = "^feat\\(tf\\)", group = "<!-- 09 -->:cityscape: Terraform"},
+    { message = "^feat\\(ci|build\\)", group = "<!-- 07 -->:construction_worker: Build Environment"},
+    { message = "^feat", group = "<!-- 01 -->:sparkles: Features"},
+    { message = "^fixup!", skip = true},
+    { message = "^fix\\(ci|build\\)", group = "<!-- 07 -->:construction_worker: Build Environment"},
+    { message = "^fix", group = "<!-- 02 -->:bug: Bug Fixes"},
+    { message = "^doc", group = "<!-- 03 -->:memo: Documentation"},
+    { message = "^perf", group = "<!-- 04 -->:zap: Performance"},
+    { message = "^refactor\\(tf\\)", group = "<!-- 09 -->:cityscape: Terraform"},
+    { message = "^refactor\\(ci|build\\)", group = "<!-- 07 -->:construction_worker: Build Environment"},
+    { message = "^refactor", group = "<!-- 05 -->:recycle: Refactoring"},
+    { message = "^lint", group = "<!-- 05 -->:recycle: Refactoring"},
+    { message = "^test", group = "<!-- 06 -->:white_check_mark: Testing"},
+    { message = "^build\\(deps.*\\)", group = "<!-- 99 -->:pushpin: Dependency Management"},
+    { message = "^build\\(dev-deps.*\\)", group = "<!-- 99 -->:pushpin: Dependency Management"},
+    { message = "^(ci|build)", group = "<!-- 07 -->:construction_worker: Build Environment"},
+    { message = "^deps", group = "<!-- 99 -->:pushpin: Dependency Management"},
+    { message = "^chore\\(deps\\)", group = "<!-- 99 -->:pushpin: Dependency Management"},
+    { message = "^chore\\(release\\):", skip = true},
+    { message = "^release:", skip = true},
+    { message = "^chore", group = "<!-- 10 -->:broom: Miscellaneous Tasks"},
+    { body = ".*security", group = "<!-- 00 -->:lock: Security"},
+]
+# filter out the commits that are not matched by commit parsers
+filter_commits = false
+# glob pattern for matching git tags
+tag_pattern = "[0-9]*"
+# regex for skipping tags
+skip_tags = ".*-beta.*"
+# regex for ignoring tags
+ignore_tags = ".*-alpha.*"
+# sort the tags chronologically
+date_order = false
+# sort the commits inside sections by oldest/newest order
+sort_commits = "newest"
+protect_breaking_commits = true

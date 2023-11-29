@@ -8,7 +8,7 @@ I was just a little bit frustrated by https://github.com/lee-dohm/select-matchin
 
 > The original is being forced to run with Node16 by github right now, and it is working. However, in a couple of years, when Node20 is forced upon us it will probably stop working because of openssl which eventually leads us to `ERR_OSSL_EVP_UNSUPPORTED`. Upgrading is certainly possible (you would also have to fixup the tests that mock the github API) but honestly I don't enjoy working with node enough to do it.
 
-This scratches my own personal itch around my use-case when searching for issues.
+This scratches my own personal itch around my use-case when searching for issues vis-a-vis json & jsonlines.
 
 ## Usage
 
@@ -29,3 +29,7 @@ It goes something like this...
   run: |
     gh issue create -l terraform -F "${{ steps.query_issues.outputs.path }}" -t "Issue List" -R "${{ github.repository }}"
 ```
+
+## Releases
+
+It's always an explicit semver (v1.0.0 or similar) with no additional convenience tags like `@v1`, `@v1.1`. This isn't because I don't enjoy the convenience that something like `@v1` gives you, but I've seen far too many things _break_ because someone thought things were more compatible than they really were. It's a github action, which means you have access to dependabot, which means this shouldn't be an issue for you.

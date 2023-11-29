@@ -14,9 +14,9 @@ jobs:
       pull-requests: write
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: shellcheck
-        uses: reviewdog/action-shellcheck@v1
+        uses: reviewdog/action-shellcheck@96fa305c16b0f9cc9b093af22dcd09de1c8f1c2d # v1.19.0
         with:
           reporter: github-pr-review
           pattern: main.sh
@@ -31,11 +31,12 @@ jobs:
     if: |
       github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           fetch-depth: 0
       - name: committed
-        uses: crate-ci/committed@v1.0.20
+        uses: crate-ci/committed@e0a4ba358ac0e6292e750f61b74f77a347eb10ad # v1.0.20
         with:
           args: --no-merge-commit
 
@@ -45,9 +46,10 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: typos
-        uses: crate-ci/typos@v1.16.23
+        uses: crate-ci/typos@c97d621b6b01d8b0258538ca15abeca5c5764601 # v1.16.23
 
   dependabot-merge:
     needs:
@@ -61,16 +63,16 @@ jobs:
       github.actor == 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
-    - name: Find associated PR
-      uses: jwalton/gh-find-current-pr@v1.3.2
-      id: findpr
-      with:
-        github-token: ${{ github.token }}
-        state: open
-        sha: ${{ github.event.pull_request.head.sha || github.event.workflow_run.head_sha || github.sha }}
-    - name: merge-if-built
-      continue-on-error: true
-      uses: fastify/github-action-merge-dependabot@v3.9.1
-      with:
-        pr-number: ${{ steps.findpr.outputs.pr }}
-        target: minor
+      - name: Find associated PR
+        uses: jwalton/gh-find-current-pr@7ada613939e2a233c83a1320679446fa1c6bdcb9 # v1.3.2
+        id: findpr
+        with:
+          github-token: ${{ github.token }}
+          state: open
+          sha: ${{ github.event.pull_request.head.sha || github.event.workflow_run.head_sha || github.sha }}
+      - name: merge-if-built
+        continue-on-error: true
+        uses: fastify/github-action-merge-dependabot@59fc8817458fac20df8884576cfe69dbb77c9a07 # v3.9.1
+        with:
+          pr-number: ${{ steps.findpr.outputs.pr }}
+          target: minor
