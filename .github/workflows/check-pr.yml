@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Find associated PR
-        uses: jwalton/gh-find-current-pr@7ada613939e2a233c83a1320679446fa1c6bdcb9 # v1.3.2
+        uses: jwalton/gh-find-current-pr@89ee5799558265a1e0e31fab792ebb4ee91c016b # v1.3.3
         id: findpr
         with:
           github-token: ${{ github.token }}
