@@ -49,7 +49,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: typos
-        uses: crate-ci/typos@bdcaedb080584d2f4f93f1da48df4645149adb7f # v1.17.2
+        uses: crate-ci/typos@443e650b508bf4e7eeb460d1b99973a657354ee1 # v1.18.1
 
   dependabot-merge:
     needs:
