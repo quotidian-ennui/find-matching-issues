@@ -1,0 +1,35 @@
+name: dependabot-pr
+run-name: Assess Dependabot PR (${{ github.event.client_payload.detail.pull_request }})
+on:
+  repository_dispatch:
+    types:
+      - check-pr-success
+
+permissions: {}
+
+jobs:
+  actions_merge:
+    runs-on: ubuntu-latest
+    name: Dependabot Merge (action changes)
+    permissions:
+      contents: write
+    if: |
+      github.event.client_payload.detail.pull_request != ''
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          ref: ${{ github.event.client_payload.base.ref }}
+      - name: "Create Token"
+        uses: actions/create-github-app-token@f4c6bf6752984b3a29fcc135a5e70eb792c40c6b # v1.8.0
+        id: app-token
+        with:
+          app-id: ${{ vars.WORKFLOW_UPDATE_APP_ID }}
+          private-key: ${{ secrets.WORKFLOW_UPDATE_KEY }}
+          owner: ${{ github.repository_owner }}
+      - name: Dependabot Merge
+        id: dependabot_merge
+        uses: quotidian-ennui/actions-olio/dependabot-merge@main
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          change_filter: ".github/workflows/**"
