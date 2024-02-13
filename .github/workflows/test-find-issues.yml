@@ -151,7 +151,7 @@ jobs:
             echo "::error::we found nothing when we should have found something"
             exit 1
           fi
-          URL=$(cat  "${{ steps.find.outputs.path }}" | jq -r '.[0].url')
+          URL=$(jq -r '.[0].url' "${{ steps.find.outputs.path }}")
           if [[ "$URL" != "https://github.com/quotidian-ennui/find-matching-issues/issues/1" ]]; then
             echo "::error::test-find-json found the wrong issue"
             exit 1
