@@ -51,7 +51,7 @@ jobs:
       - name: typos
         uses: crate-ci/typos@443e650b508bf4e7eeb460d1b99973a657354ee1 # v1.18.1
 
-  dependabot-merge:
+  dispatch:
     needs:
       - shellcheck
       - committed
@@ -60,19 +60,13 @@ jobs:
       contents: write
       pull-requests: write
     if: |
-      github.actor == 'dependabot[bot]'
+      success() && github.actor == 'dependabot[bot]'
     runs-on: ubuntu-latest
+    name: dispatch
     steps:
-      - name: Find associated PR
-        uses: jwalton/gh-find-current-pr@89ee5799558265a1e0e31fab792ebb4ee91c016b # v1.3.3
-        id: findpr
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: dispatch
+        uses: quotidian-ennui/actions-olio/pr-trigger@main
         with:
-          github-token: ${{ github.token }}
-          state: open
-          sha: ${{ github.event.pull_request.head.sha || github.event.workflow_run.head_sha || github.sha }}
-      - name: merge-if-built
-        continue-on-error: true
-        uses: fastify/github-action-merge-dependabot@9e7bfb249c69139d7bdcd8d984f9665edd49020b # v3.10.1
-        with:
-          pr-number: ${{ steps.findpr.outputs.pr }}
-          target: minor
+          event_type: check-pr-success
