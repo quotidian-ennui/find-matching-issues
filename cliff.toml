@@ -1,4 +1,9 @@
-# configuration file for git-cliff (0.1.0)
+# git-cliff ~ configuration file
+# https://git-cliff.org/docs/configuration
+
+[remote.github]
+owner = "quotidian-ennui"
+repo = "find-matching-issues"
 
 [changelog]
 # changelog header
@@ -17,7 +22,7 @@ body = """
 {% for group, commits in commits | group_by(attribute="group") %}
     ### {{ group | striptags | trim | upper_first }}
     {% for commit in commits %}
-        - {% if commit.breaking %}(:boom: **BREAKING**) {% endif %}{% if commit.scope %}({{ commit.scope }}) {% endif %}{{ commit.message | upper_first }} by {{commit.author.name}}\
+        - {% if commit.breaking %}:boom: (**BREAKING**) {% endif %}{% if commit.scope %}({{ commit.scope }}) {% endif %}{{ commit.message | upper_first }} by {{commit.author.name}}\
     {% endfor %}
 {% endfor %}\n
 """
@@ -39,6 +44,9 @@ conventional_commits = true
 filter_unconventional = false
 # regex for preprocessing the commit messages
 commit_preprocessors = [
+    # remove issue numbers from commits for running in remote mode
+    # { pattern = '\((\w+\s)?#([0-9]+)\)', replace = "" },
+    # If not in github remote mode, we add in links to the issues manually.
     { pattern = '\((\w+\s)?#([0-9]+)\)', replace = "([#${2}](https://github.com/quotidian-ennui/find-matching-issues/issues/${2}))"},
     { pattern = '^Bump (.*)', replace = "deps: Bump $1"},
     { pattern = '^updatecli: (.*)', replace = "deps(updatecli): $1"},
@@ -61,12 +69,15 @@ commit_parsers = [
     { message = "^build\\(deps.*\\)", group = "<!-- 99 -->:pushpin: Dependency Management"},
     { message = "^build\\(dev-deps.*\\)", group = "<!-- 99 -->:pushpin: Dependency Management"},
     { message = "^(ci|build)", group = "<!-- 07 -->:construction_worker: Build Environment"},
+    { message = "^deps\\(ci|build|actions\\)", group = "<!-- 07 -->:construction_worker: Build Environment"},
     { message = "^deps", group = "<!-- 99 -->:pushpin: Dependency Management"},
     { message = "^chore\\(deps\\)", group = "<!-- 99 -->:pushpin: Dependency Management"},
     { message = "^chore\\(release\\):", skip = true},
     { message = "^release:", skip = true},
+    { message = "^Merge branch '", skip = true},
     { message = "^chore", group = "<!-- 10 -->:broom: Miscellaneous Tasks"},
     { body = ".*security", group = "<!-- 00 -->:lock: Security"},
+    { message = ".*", group = "<!--80-->Uncategorised" },
 ]
 # filter out the commits that are not matched by commit parsers
 filter_commits = false
