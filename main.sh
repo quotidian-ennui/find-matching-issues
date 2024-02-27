@@ -33,7 +33,7 @@ function query_issues() {
 # This is clearly a bout of premature optimisation and saving
 # a few newlines & spaces shouldn't be high on anyone's list
 function internal::compressQuery() {
-  echo "$1" | tr -d '\n'
+  echo "$1" | tr -s ' ' | tr -d '\n'
 }
 
 function buildQueryString() {
