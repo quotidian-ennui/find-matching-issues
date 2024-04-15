@@ -49,7 +49,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
       - name: typos
-        uses: crate-ci/typos@c15b28fff9a814f9c12bd24cb1cfc114037e9187 # v1.20.4
+        uses: crate-ci/typos@efad85b292e13df995ff2476013baaa5f1c30459 # v1.20.8
 
   dispatch:
     needs:
