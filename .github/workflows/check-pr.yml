@@ -16,7 +16,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
       - name: shellcheck
-        uses: reviewdog/action-shellcheck@6e3a862f231c6895fbd335b70adef8f9243d5762 # v1.21.0
+        uses: reviewdog/action-shellcheck@3546242c869924d13293e38e6289e00a26468e02 # v1.22.0
         with:
           reporter: github-pr-review
           pattern: main.sh
