@@ -25,7 +25,7 @@ jobs:
       result: ${{ steps.check_files.outcome || steps.find.outcome || 'failure' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: find issues
         id: find
         uses: ./
@@ -49,7 +49,7 @@ jobs:
       result: ${{ steps.check_files.outcome || steps.find.outcome || 'failure' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: find issues
         id: find
         uses: ./
@@ -79,7 +79,7 @@ jobs:
       result: ${{ steps.check_files.outcome || steps.find.outcome || 'failure' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: find issues
         id: find
         uses: ./
@@ -108,7 +108,7 @@ jobs:
       result: ${{ steps.check_files.outcome || steps.find.outcome || 'failure' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: find issues
         id: find
         uses: ./
@@ -137,7 +137,7 @@ jobs:
       result: ${{ steps.check_files.outcome || steps.find.outcome || 'failure' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: find issues
         id: find
         uses: ./
