@@ -36,7 +36,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: committed
-        uses: crate-ci/committed@e0a4ba358ac0e6292e750f61b74f77a347eb10ad # v1.0.20
+        uses: crate-ci/committed@608423fab72842b4be0be432ca0591337fc85698 # v1.1.1
         with:
           args: --no-merge-commit
 
