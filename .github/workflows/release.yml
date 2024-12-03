@@ -20,11 +20,15 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Generate changelog
         uses: orhun/git-cliff-action@e364f07989916ffb9f50d7ef6c0a8c48082c2792 # v4.4.1
         id: changelog
         with:
-          args: --current
+          args: --current --github-repo "${{ github.repository }}"
+        env:
+          OUTPUT: CHANGELOG.md
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Release
         uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5 # v1.14.0
         with:
