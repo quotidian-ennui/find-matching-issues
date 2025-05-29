@@ -1,5 +1,7 @@
 set positional-arguments := true
 set dotenv-load := true
+set unstable := true
+set script-interpreter := ['/usr/bin/env', 'bash']
 
 # show recipes
 [private]
@@ -8,8 +10,9 @@ set dotenv-load := true
 
 # tag and optionally push the tag
 [group("release")]
+[script]
 release tag push="localonly":
-    #!/usr/bin/env bash
+    #
     set -eo pipefail
 
     git diff --quiet || (echo "--> git is dirty" && exit 1)
