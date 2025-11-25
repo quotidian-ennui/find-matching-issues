@@ -19,6 +19,7 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
+          persist-credentials: false
           ref: ${{ github.event.client_payload.base.ref }}
       - name: "Create Token"
         uses: actions/create-github-app-token@7e473efe3cb98aa54f8d4bac15400b15fad77d94 # v2.2.0
