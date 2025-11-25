@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        with:
+          persist-credentials: false
       - name: shellcheck
         uses: reviewdog/action-shellcheck@4c07458293ac342d477251099501a718ae5ef86e # v1.32.0
         with:
@@ -22,23 +24,6 @@ jobs:
           pattern: main.sh
           fail_on_error: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
-  committed:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-    if: |
-      github.event_name == 'pull_request'
-    steps:
-      - name: checkout
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
-        with:
-          fetch-depth: 0
-      - name: committed
-        uses: crate-ci/committed@bb02f309663f9baced8dbd5fdd80c6369ddf3efd # v1.1.8
-        with:
-          args: --no-merge-commit
 
   typos:
     runs-on: ubuntu-latest
@@ -48,13 +33,14 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        with:
+          persist-credentials: false
       - name: typos
         uses: crate-ci/typos@626c4bedb751ce0b7f03262ca97ddda9a076ae1c # v1.39.2
 
   dispatch:
     needs:
       - shellcheck
-      - committed
       - typos
     permissions:
       contents: write
