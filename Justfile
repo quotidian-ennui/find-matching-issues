@@ -68,7 +68,7 @@ autotag push="localonly":
     #
     set -eo pipefail
 
-    next="$(just next)"
+    next="v$(just next)"
     just release $next "{{ push }}"
 
 # tag and optionally push the tag
