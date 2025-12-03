@@ -21,12 +21,26 @@ body = """
         - {% if commit.breaking %}💥(**BREAKING**) {% endif %}{% if commit.scope %}({{ commit.scope }}) {% endif %}{{ commit.message | upper_first | trim}} by {{commit.author.name}}\
     {% endfor %}
 {% endfor %}
+### ℹ️ Commit Statistics
+
+- {{ statistics.commit_count }} commit(s) contributed to the release.
+- {{ statistics.commits_timespan | default(value=0) }} day(s) passed between the first and last commit.
+{%- if statistics.days_passed_since_last_release %}
+- {{ statistics.days_passed_since_last_release }} day(s) since last release
+{%- endif %}
+- {{ statistics.links | length }} linked issue(s) detected in commits.
+{%- if statistics.links | length > 0 %}
+    {%- for link in statistics.links %}
+        {{ "  " }}- [{{ link.text }}]({{ link.href }}) (referenced {{ link.count }} time(s))
+    {%- endfor %}
+{%- endif %}
 {% if version %}\
     {% if previous.version %}\
+      {%- raw %}\n{% endraw -%}
       **Full Changelog**: https://github.com/{{ remote.github.owner }}/{{ remote.github.repo }}/compare/{{ previous.version }}...{{ version }}\
     {% endif %}\
 {% endif -%}\
-{% raw %}\n{% endraw %}
+{%- raw %}\n{% endraw -%}
 """
 # remove the leading and trailing whitespace from the template
 trim = true
