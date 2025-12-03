@@ -51,7 +51,7 @@ next:
     computedVersion=$(git semver next "$semver_arg" 2>/dev/null || true)
     if [[ -n "$computedVersion" ]]; then
       if [[ "$computedVersion" == "$lastTaggedVersion" ]]; then
-        bumpMinor "$lastTaggedVersion"
+        bumpPatch "$lastTaggedVersion"
       else
         echo "$computedVersion"
       fi
@@ -68,7 +68,7 @@ autotag push="localonly":
     #
     set -eo pipefail
 
-    next="v$(just next)"
+    next="$(just next)"
     just release $next "{{ push }}"
 
 # tag and optionally push the tag
@@ -81,10 +81,10 @@ release tag push="localonly":
     git diff --quiet || (echo "--> git is dirty" && exit 1)
     tag="{{ tag }}"
     push="{{ push }}"
-    git tag "$tag" -m"release: $tag"
+    next=$(echo "{{ tag }}" | sed -E 's/^v?/v/')
+    git tag "$next" -m"release: $next"
     case "$push" in
       push|github)
-        git push --all
         git push --tags
         ;;
       *)
