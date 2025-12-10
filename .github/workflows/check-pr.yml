@@ -12,6 +12,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      checks: write
     steps:
       - name: checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -21,27 +22,30 @@ jobs:
         uses: reviewdog/action-shellcheck@4c07458293ac342d477251099501a718ae5ef86e # v1.32.0
         with:
           reporter: github-pr-review
-          pattern: main.sh
-          fail_on_error: true
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          fail_level: error
+          check_all_files_with_shebangs: "true"
+          github_token: ${{ secrets.github_token }}
 
-  typos:
+  # Check the PR title conforms to 'conventional'
+  pr-title:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write
+      pull-requests: read
     steps:
-      - name: checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          persist-credentials: false
-      - name: typos
-        uses: crate-ci/typos@2d0ce569feab1f8752f1dde43cc2f2aa53236e06 # v1.40.0
+      - run: |
+          regexp="^(build|ci|docs|feat|fix|perf|refactor|style|test|chore|deps)(\(.+\))?(!)?: "
+          if [[ ! $PR_TITLE =~ $regexp ]]; then
+            echo "PR Title is not 'conventional' matching $regexp" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
 
   dispatch:
     needs:
       - shellcheck
-      - typos
+      - pr-title
     permissions:
       contents: write
       pull-requests: write

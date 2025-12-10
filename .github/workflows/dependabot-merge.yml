@@ -13,6 +13,8 @@ jobs:
     name: Dependabot Merge (action changes)
     permissions:
       contents: write
+      pull-requests: write
+      checks: write
     if: |
       github.event.client_payload.detail.pull_request != ''
     steps:
