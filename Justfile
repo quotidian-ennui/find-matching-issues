@@ -90,6 +90,11 @@ release tag push="localonly": git_uptodate
         ;;
     esac
 
+# Show changelog
+[group("release")]
+@changelog *args="--unreleased":
+    git cliff "$@"
+
 # Check if git is uptodate with remote
 [script]
 [private]
