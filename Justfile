@@ -74,11 +74,10 @@ autotag push="localonly":
 # tag and optionally push the tag
 [group("release")]
 [script]
-release tag push="localonly":
+release tag push="localonly": git_uptodate
     #
     set -eo pipefail
 
-    git diff --quiet || (echo "--> git is dirty" && exit 1)
     tag="{{ tag }}"
     push="{{ push }}"
     next=$(echo "{{ tag }}" | sed -E 's/^v?/v/')
@@ -90,3 +89,18 @@ release tag push="localonly":
       *)
         ;;
     esac
+
+# Check if git is uptodate with remote
+[script]
+[private]
+git_uptodate:
+    #
+    set -eo pipefail
+    git diff --quiet || (echo "⚠️ git is dirty" && exit 1)
+    default_branch=$(git remote show "origin" | grep 'HEAD branch' | cut -d' ' -f5)
+    remote_hash=$(git ls-remote origin "refs/heads/$default_branch" | cut -f1)
+    local_hash=$(git rev-parse "$(git branch --show-current)")
+    if [[ "$remote_hash" != "$local_hash" ]]; then
+      echo "⚠️ Remote hash differs, are we up to date?"
+      exit 1
+    fi
