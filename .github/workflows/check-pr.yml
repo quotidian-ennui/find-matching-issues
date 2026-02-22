@@ -57,6 +57,6 @@ jobs:
     name: dispatch
     steps:
       - name: dispatch
-        uses: quotidian-ennui/actions-olio/pr-trigger@main
+        uses: quotidian-ennui/actions-olio/pr-trigger@2224d6e995321a927dcefae3c67cb7fa63510728 # v0.8.3
         with:
           event_type: check-pr-success

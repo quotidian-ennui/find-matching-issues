@@ -33,7 +33,7 @@ jobs:
           repositories: "${{ github.event.repository.name}}"
       - name: Dependabot Merge
         id: dependabot_merge
-        uses: quotidian-ennui/actions-olio/dependabot-merge@main
+        uses: quotidian-ennui/actions-olio/dependabot-merge@2224d6e995321a927dcefae3c67cb7fa63510728 # v0.8.3
         with:
           token: ${{ steps.app-token.outputs.token }}
           change_filter: ".github/workflows/**"
