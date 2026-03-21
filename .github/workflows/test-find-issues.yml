@@ -223,6 +223,8 @@ jobs:
             echo ":thumbsdown:" >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: comment
+        if: |
+          github.event_name == 'pull_request'
         id: comment
         uses: quotidian-ennui/actions-olio/pr-or-issue-comment@83871db203c510c8c8d65292f24ebf5437728e7c # v0.9.1
         with:
