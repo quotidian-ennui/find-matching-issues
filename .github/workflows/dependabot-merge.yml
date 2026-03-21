@@ -1,39 +1,13 @@
-name: dependabot-pr
-run-name: Assess Dependabot PR (${{ github.event.client_payload.detail.pull_request }})
+name: dependabot-merge
+run-name: Dependabot workflow changes (${{ github.event.client_payload.detail.pull_request }})
 on:
   repository_dispatch:
     types:
-      - check-pr-success
+      - dependabot-merge
 
 permissions: {}
 
 jobs:
   actions_merge:
-    runs-on: ubuntu-latest
-    name: Dependabot Merge (action changes)
-    permissions:
-      contents: write
-      pull-requests: write
-      checks: write
-    if: |
-      github.event.client_payload.detail.pull_request != ''
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-          ref: ${{ github.event.client_payload.base.ref }}
-      - name: "Create Token"
-        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
-        id: app-token
-        with:
-          app-id: ${{ vars.WORKFLOW_UPDATE_APP_ID }}
-          private-key: ${{ secrets.WORKFLOW_UPDATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: "${{ github.event.repository.name}}"
-      - name: Dependabot Merge
-        id: dependabot_merge
-        uses: quotidian-ennui/actions-olio/dependabot-merge@1676ca6e5208a6f314f6c2255bdd8a072ddc33eb # v0.9.0
-        with:
-          token: ${{ steps.app-token.outputs.token }}
-          change_filter: ".github/workflows/**"
+    uses: quotidian-ennui/workflows-olio/.github/workflows/action-dependabot-merge.yml@main
+    secrets: inherit

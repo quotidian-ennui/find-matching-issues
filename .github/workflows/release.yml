@@ -2,7 +2,7 @@ name: release
 on:
   push:
     tags:
-      - '*'
+      - "*"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -12,26 +12,7 @@ permissions: {}
 
 jobs:
   create-release:
-    runs-on: ubuntu-latest
+    uses: quotidian-ennui/workflows-olio/.github/workflows/create-release.yml@main
+    secrets: inherit
     permissions:
       contents: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Generate changelog
-        uses: orhun/git-cliff-action@c93ef52f3d0ddcdcc9bd5447d98d458a11cd4f72 # v4.7.1
-        id: changelog
-        with:
-          args: --current --github-repo "${{ github.repository }}"
-        env:
-          OUTPUT: CHANGELOG.md
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Create Release
-        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
-        with:
-          bodyFile: ${{ steps.changelog.outputs.changelog }}
-          draft: false
-          makeLatest: true
