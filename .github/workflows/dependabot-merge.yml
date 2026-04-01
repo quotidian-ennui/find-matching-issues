@@ -9,5 +9,5 @@ permissions: {}
 
 jobs:
   actions_merge:
-    uses: quotidian-ennui/workflows-olio/.github/workflows/action-dependabot-merge.yml@main
+    uses: quotidian-ennui/workflows-olio/.github/workflows/action-dependabot-merge.yml@290daed67f03ed2f2502eee057f35e61327b1bef # v1.0.0
     secrets: inherit
