@@ -226,7 +226,7 @@ jobs:
         if: |
           github.event_name == 'pull_request'
         id: comment
-        uses: quotidian-ennui/actions-olio/pr-or-issue-comment@83871db203c510c8c8d65292f24ebf5437728e7c # v0.9.1
+        uses: quotidian-ennui/actions-olio/pr-or-issue-comment@80eb94186f07a299ea6a6954d56ee20926db1cd7 # v0.10.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           search_term: ${{ env.COMMENT_ID}}
