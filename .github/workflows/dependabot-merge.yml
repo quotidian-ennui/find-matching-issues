@@ -1,5 +1,5 @@
 name: dependabot-merge
-run-name: Dependabot workflow changes (${{ github.event.client_payload.detail.pull_request }})
+run-name: Merge dependabot-pr (${{ github.event.client_payload.detail.pull_request }})
 on:
   repository_dispatch:
     types:
@@ -7,7 +7,12 @@ on:
 
 permissions: {}
 
+# A push via dependabot basically means that the github actions
+# have been upgraded;
 jobs:
   actions_merge:
-    uses: quotidian-ennui/workflows-olio/.github/workflows/action-dependabot-merge.yml@290daed67f03ed2f2502eee057f35e61327b1bef # v1.0.0
-    secrets: inherit
+    uses: quotidian-ennui/workflows-olio/.github/workflows/action-dependabot-merge.yml@4beb72c77ee9fb289c0bb9a5eb8d61256bb9935a # v2.0.0
+    with:
+      client_id: ${{ vars.WORKFLOW_UPDATE_CLIENT_ID }}
+    secrets:
+      app_private_key: ${{ secrets.WORKFLOW_UPDATE_KEY }}
