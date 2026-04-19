@@ -12,7 +12,7 @@ permissions: {}
 
 jobs:
   create-release:
-    uses: quotidian-ennui/workflows-olio/.github/workflows/create-release.yml@4beb72c77ee9fb289c0bb9a5eb8d61256bb9935a # v2.0.0
+    uses: quotidian-ennui/workflows-olio/.github/workflows/create-release.yml@6099af4157e6653a07431f39552a6b36bb331d2b # v2.1.0
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
     permissions:

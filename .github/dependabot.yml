@@ -13,3 +13,7 @@ updates:
       - dependency-type: "all"
     commit-message:
       prefix: "deps(actions): "
+    groups:
+      workflows-olio:
+        patterns:
+          - "quotidian-ennui/workflows-olio/*"
