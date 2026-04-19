@@ -5,9 +5,13 @@ on:
     branches:
       - main
     types: [opened, synchronize, reopened, edited]
+    paths-ignore:
+      - README.md
   push:
     branches:
       - main
+    paths-ignore:
+      - README.md
   workflow_dispatch:
 
 concurrency:
