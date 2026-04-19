@@ -241,7 +241,7 @@ jobs:
     if: |
       github.event_name == 'pull_request' &&
       needs.test_status.outputs.pass == 'true'
-    uses: quotidian-ennui/workflows-olio/.github/workflows/check-pr-with-trigger.yml@a264ff9f02fe581c9241fc238d6e36d56dc71add # v2.0.0
+    uses: quotidian-ennui/workflows-olio/.github/workflows/check-pr-with-trigger.yml@6099af4157e6653a07431f39552a6b36bb331d2b # v2.1.0
     permissions:
       contents: write
       pull-requests: write
