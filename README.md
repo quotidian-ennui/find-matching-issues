@@ -34,12 +34,12 @@ It goes something like this...
 
 <!-- AUTO-DOC-INPUT:START - Do not remove or modify this section -->
 
-|   INPUT    |  TYPE  | REQUIRED |           DEFAULT            |                               DESCRIPTION                               |
-|------------|--------|----------|------------------------------|-------------------------------------------------------------------------|
-|   format   | string |  false   |          `"simple"`          | The format of the output: simple,markdown,json,jsonl, simple is default |
-|   query    | string |   true   |                              |                         The search query to use                         |
-| repository | string |  false   | `"${{ github.repository }}"` |    The repository to search in defaults to the one in github context    |
-|   token    | string |  false   |   `"${{ github.token }}"`    |        The github token (defaults to the one in github context)         |
+|   INPUT    |  TYPE  | REQUIRED |           DEFAULT            |                                DESCRIPTION                                 |
+|------------|--------|----------|------------------------------|----------------------------------------------------------------------------|
+|   format   | string |  false   |          `"simple"`          | The format of the output: simple,markdown,json or jsonl, simple is default |
+|   query    | string |   true   |                              |                          The search query to use                           |
+| repository | string |  false   | `"${{ github.repository }}"` |     The repository to search in defaults to the one in github context      |
+|   token    | string |  false   |   `"${{ github.token }}"`    |          The github token (defaults to the one in github context)          |
 
 <!-- AUTO-DOC-INPUT:END -->
 
