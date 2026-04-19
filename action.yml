@@ -13,7 +13,7 @@ inputs:
     description: "The search query to use"
     required: true
   format:
-    description: "The format of the output: simple,markdown,json,jsonl, simple is default"
+    description: "The format of the output: simple,markdown,json or jsonl, simple is default"
     required: false
     default: "simple"
 outputs:
