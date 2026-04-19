@@ -1,0 +1,70 @@
+name: Update documentation
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened, edited]
+
+defaults:
+  run:
+    shell: bash
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PR_GITHUB_USER: qe-repo-updater[bot] <152897211+qe-repo-updater[bot]@users.noreply.github.com>
+
+jobs:
+  autodoc:
+    name: autodoc
+    runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
+    steps:
+      - name: Get Token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        id: app-token
+        with:
+          client-id: ${{ vars.WORKFLOW_UPDATE_CLIENT_ID }}
+          private-key: ${{ secrets.WORKFLOW_UPDATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: "${{ github.event.repository.name}}"
+          permission-contents: write
+
+      - name: Install auto-doc
+        uses: jaxxstorm/action-install-gh-release@25e24d2d23ae098373794ef1d6faecb48ee52da8 # v3.0.0
+        with:
+          repo: tj-actions/auto-doc
+
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
+
+      - name: Run auto-doc
+        env:
+          ACTION_FILE: action.yml
+          README_FILE: README.md
+        run: |
+          #!/usr/bin/env bash
+
+          echo "::group::auto-doc generator"
+          echo "Generating documentation for $base"
+          auto-doc --colMaxWords 100 --filename "$ACTION_FILE" --output "$README_FILE"
+          echo "::endgroup::"
+
+      - name: Commit changes
+        uses: iarekylew00t/verified-bot-commit@126a6a11889ab05bcff72ec2403c326cd249b84c # v2.3.0
+        with:
+          if-no-commit: info
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ steps.app-token.outputs.token }}
+          message: "docs: update action documentation"
+          update-local: false
+          files: |
+            **/*.md
