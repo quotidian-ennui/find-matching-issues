@@ -1,6 +1,6 @@
-set positional-arguments := true
-set dotenv-load := true
-set unstable := true
+set positional-arguments
+set dotenv-load
+set unstable
 set script-interpreter := ['/usr/bin/env', 'bash']
 
 # show recipes
@@ -64,12 +64,14 @@ next:
 [doc('auto-generate tag and release')]
 [group("release")]
 [script]
-autotag push="localonly":
+please-release push="localonly":
     #
     set -eo pipefail
 
     next="$(just next)"
     just release $next "{{ push }}"
+
+alias autotag := please-release
 
 # tag and optionally push the tag
 [group("release")]
@@ -96,8 +98,8 @@ release tag push="localonly": git_uptodate
     git cliff "$@"
 
 # Check if git is uptodate with remote
-[script]
 [private]
+[script]
 git_uptodate:
     #
     set -eo pipefail
