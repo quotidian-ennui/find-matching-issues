@@ -4,6 +4,12 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     open-pull-requests-limit: 20
+    rebase-strategy: disabled
+    cooldown:
+      default-days: 3
+      exclude:
+        - "quotidian-ennui/workflows-olio/*"
+        - "quotidian-ennui/actions-olio/*"
     schedule:
       interval: "weekly"
       day: "sunday"
