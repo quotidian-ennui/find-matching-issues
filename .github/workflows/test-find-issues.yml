@@ -230,7 +230,7 @@ jobs:
         if: |
           github.event_name == 'pull_request'
         id: comment
-        uses: quotidian-ennui/actions-olio/pr-or-issue-comment@553ec3b65772a6de54db9a6f48f07c16a7bd3823 # v1.3.1
+        uses: quotidian-ennui/actions-olio/pr-or-issue-comment@9130e635427230114c6cb47eef6b828cb08d9cd8 # v1.3.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           search_term: ${{ env.COMMENT_ID}}
@@ -245,7 +245,7 @@ jobs:
     if: |
       github.event_name == 'pull_request' &&
       needs.test_status.outputs.pass == 'true'
-    uses: quotidian-ennui/workflows-olio/.github/workflows/check-pr-with-trigger.yml@bc5a8ca54a283873850632edff9d64a78431e63c # v2.2.3
+    uses: quotidian-ennui/workflows-olio/.github/workflows/check-pr-with-trigger.yml@eff82979a276acf5fdad410c646fc2527dbc3331 # v2.2.4
     permissions:
       contents: write
       pull-requests: write
