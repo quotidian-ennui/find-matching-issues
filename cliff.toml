@@ -71,23 +71,23 @@ commit_preprocessors = [
 # regex for parsing and grouping commits
 commit_parsers = [
     { message = "^feat\\(tf\\)", group = "<!-- 09 -->🏭 Terraform"},
-    { message = "^feat\\(ci|build\\)", group = "<!-- 07 -->👷 Build Environment"},
+    { message = "^feat\\((ci|build)\\)", group = "<!-- 07 -->👷 Build Environment"},
     { message = "^feat", group = "<!-- 01 -->✨ Features"},
     { message = "^fixup!", skip = true},
-    { message = "^fix\\(ci|build\\)", group = "<!-- 07 -->👷 Build Environment"},
+    { message = "^fix\\((ci|build)\\)", group = "<!-- 07 -->👷 Build Environment"},
     { message = "^fix", group = "<!-- 02 -->🐛 Bug Fixes"},
     { message = "^doc", group = "<!-- 03 -->📝 Documentation"},
     { message = "^docs", group = "<!-- 03 -->📝 Documentation"},
     { message = "^perf", group = "<!-- 04 -->⚡ Performance"},
     { message = "^refactor\\(tf\\)", group = "<!-- 09 -->🏭 Terraform"},
-    { message = "^refactor\\(ci|build\\)", group = "<!-- 07 -->👷 Build Environment"},
+    { message = "^refactor\\((ci|build)\\)", group = "<!-- 07 -->👷 Build Environment"},
     { message = "^refactor", group = "<!-- 05 -->♻️ Refactoring"},
     { message = "^lint", group = "<!-- 05 -->♻️ Refactoring"},
     { message = "^test", group = "<!-- 06 -->🧪 Testing"},
     { message = "^build\\(deps.*\\)", group = "<!-- 99 -->📌 Dependency Management"},
     { message = "^build\\(dev-deps.*\\)", group = "<!-- 99 -->📌 Dependency Management"},
     { message = "^(ci|build)", group = "<!-- 07 -->👷 Build Environment"},
-    { message = "^deps\\(ci|build\\)", group = "<!-- 07 -->👷 Build Environment"},
+    { message = "^deps\\((ci|build)\\)", group = "<!-- 07 -->👷 Build Environment"},
     { message = "^deps", group = "<!-- 99 -->📌 Dependency Management"},
     { message = "^chore\\(deps\\)", group = "<!-- 99 -->📌 Dependency Management"},
     { message = "^chore\\(release\\):", skip = true},
@@ -109,5 +109,5 @@ ignore_tags = ".*-alpha.*"
 # sort the tags chronologically
 date_order = false
 # sort the commits inside sections by oldest/newest order
-sort_commits = "newest"
+sort_commits = "oldest"
 protect_breaking_commits = true
